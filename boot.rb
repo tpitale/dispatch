@@ -2,8 +2,8 @@ require 'rubygems'
 require 'config'
 
 require 'bundler'
-Bundler.setup(:default, Config.environment)
-Bundler.require(:default, Config.environment)
+Bundler.setup(:default, :application, Config.environment)
+Bundler.require(:default, :application, Config.environment)
 
 set :environment, Config.environment.to_sym
 

@@ -1,7 +1,12 @@
 source "http://rubygems.org"
 
 gem 'rake', '0.8.7'
-gem 'sinatra'
+
+group :application do
+  gem 'sinatra'
+  gem 'capistrano'
+  gem 'capistrano-ext'
+end
 
 group :daemon do
   gem 'eventmachine'

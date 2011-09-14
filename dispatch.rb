@@ -1,4 +1,4 @@
-$: << '.'
+$: << '.' unless $:.include?('.')
 
 require 'boot'
 

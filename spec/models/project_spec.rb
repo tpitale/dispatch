@@ -34,6 +34,7 @@ describe Project do
     end
 
     it "deploys to a given stage" do
+      File.stubs(:open).yields(stub(:write))
       @project.stubs(:stages).returns(["staging"])
       @project.stubs(:system).returns("a log of data")
       @project.deploy_to("staging")
@@ -48,7 +49,12 @@ describe Project do
     end
 
     it "writes the deploy log returned to a logfile" do
-      
+      file = stub(:write)
+      File.stubs(:open).yields(file)
+      @project.stubs(:stages).returns(["staging"])
+      @project.stubs(:system).returns("log log log")
+      @project.deploy_to("staging")
+      file.should have_received(:write).with("log log log")
     end
   end
 end

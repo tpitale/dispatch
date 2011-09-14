@@ -35,3 +35,65 @@ q:before,q:after {
 abbr,acronym { 
   border:0;
 }
+
+body {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+a.button {
+  font-size: 80%;
+  color: #333;
+  text-decoration: none;
+  padding: 3px 10px 5px 10px;
+  text-shadow: 0 1px #FFF;
+  background-image: -moz-linear-gradient(top, #CCC, #AAA 100% );
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #CCC), color-stop(1, #AAA) );
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #CCC;
+}
+
+a.button:hover {
+  color: #FFF;
+  text-shadow: 0 1px #000;
+  background-image: -moz-linear-gradient(top, #999, #666 100% );
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #999), color-stop(1, #666));
+}
+
+/* Project List
+=============================================================================*/
+ul.primary-list {
+  width: 320px;
+  margin: 100px auto;
+}
+
+ul.primary-list li.row {
+  padding: 10px;
+  color: #333333;
+  text-shadow: 0 1px #FFF;
+  background-image: -moz-linear-gradient(top, #EEE, #CCC 100% );
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #EEE), color-stop(1, #CCC) );  
+}
+
+ul.primary-list li.row:first-child {
+  -webkit-border-top-right-radius: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-topleft: 5px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+ul.primary-list li.row:last-child {
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+ul.primary-list li.row div.stages {
+  float: right;
+}

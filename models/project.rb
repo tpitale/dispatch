@@ -1,5 +1,5 @@
 class Project
-  attr_accessor :name, :path
+  attr_accessor :name
 
   PROJECT_PATH = Config.root + '/projects'
 
@@ -20,15 +20,22 @@ class Project
   end
 
   def stages
-    Dir["#{path}/deploy/*", ".rb"].map {|deploy_path| deploy_path.split('/').last}
+    Dir["#{path}/deploy/*", ".rb"].map {|deploy_path| deploy_path.split('/').last.gsub('.rb', '')}
   end
 
   def deploy_path(stage = nil)
     [path, 'deploy', stage].compact.join('/') + ".rb"
   end
 
+  def log_filename(stage)
+    "#{path}/logs/#{Time.now.to_i}-#{stage}.log"
+  end
+
   def deploy_to(stage)
-    system("cap deploy -f #{deploy_path} -f #{deploy_path(stage)}") if stages.include?(stage)
+    if stages.include?(stage)
+      deploy_logs = system("cap deploy -f #{deploy_path} -f #{deploy_path(stage)}")
+      File.open(log_filename(stage), 'w') {|f| f.write(deploy_logs)}
+    end
   end
 
   def ==(other)

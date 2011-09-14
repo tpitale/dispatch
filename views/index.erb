@@ -2,6 +2,11 @@
 	<% @projects.each do |project| %>
 		<li class="row">
 			<%= project.name %>
+			<div class='stages'>
+				<% project.stages.each do |stage| %>
+					<a href="#" class="button" data-project="<%= project.name %>" data-stage="<%= stage %>"><%= stage %></a>
+				<% end %>
+			</div>
 		</li>
 	<% end %>
 </ul>

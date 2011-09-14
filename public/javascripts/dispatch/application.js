@@ -3,6 +3,7 @@ var DIS = DIS || {};
 DIS = $.extend({}, DIS, {
 	common: {
 		init: function() {
+			$("body").noisy();
 			// pull cruise rss feed for each of the rows
 			// set class failed for any row that has failed
 			// set class passed for any row that has passed, which causes the buttons to show

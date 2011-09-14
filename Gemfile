@@ -1,14 +1,16 @@
 source "http://rubygems.org"
 
 gem 'rake', '0.8.7'
+gem 'capistrano'
+gem 'capistrano-ext'
+gem 'railsless-deploy', :require => false
 
 group :application do
   gem 'sinatra'
-  gem 'capistrano'
-  gem 'capistrano-ext'
 end
 
 group :daemon do
+  gem 'yajl-ruby'
   gem 'eventmachine'
   gem 'em-websocket'
 end

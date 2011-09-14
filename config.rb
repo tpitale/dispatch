@@ -1,4 +1,4 @@
-module Config
+module Configuration
   extend self
 
   def root

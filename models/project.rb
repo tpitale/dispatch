@@ -1,12 +1,16 @@
 class Project
   attr_accessor :name
 
-  PROJECT_PATH = Config.root + '/projects'
+  PROJECT_PATH = Configuration.root + '/projects'
 
   def self.all
-    Dir["#{Config.root}/projects/*"].map do |path|
+    Dir["#{Configuration.root}/projects/*"].map do |path|
       Project.new(:name => path.split('/').last)
     end
+  end
+
+  def self.find(name)
+    all.detect {|p| p.name == name}
   end
 
   def initialize(attributes = {})
@@ -33,7 +37,7 @@ class Project
 
   def deploy_to(stage)
     if stages.include?(stage)
-      deploy_logs = system("cap deploy -f #{deploy_path} -f #{deploy_path(stage)}")
+      deploy_logs = system("cap -S stage=#{stage} -f Capfile -f #{deploy_path} -f #{deploy_path(stage)} -n deploy")
       File.open(log_filename(stage), 'w') {|f| f.write(deploy_logs)}
     end
   end

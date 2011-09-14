@@ -61,11 +61,33 @@ a.button:hover {
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #999), color-stop(1, #666));
 }
 
+/* Heading Image
+=============================================================================*/
+h1.logo {
+  margin: 23px auto;
+}
+
+h1.closed {
+  height: 54px;
+  width: 54px;
+  text-indent: -9999px;
+  overflow: hidden;
+  background-image: url('/images/dispatch-gray.png');
+}
+
+h1.open {
+  height: 54px;
+  width: 54px;
+  text-indent: -9999px;
+  overflow: hidden;
+  background-image: url('/images/dispatch-blue.png');
+}
+
 /* Project List
 =============================================================================*/
 ul.primary-list {
   width: 320px;
-  margin: 100px auto;
+  margin: 23px auto;
 }
 
 ul.primary-list li.row {

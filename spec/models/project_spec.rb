@@ -3,9 +3,9 @@ require 'spec_helper'
 describe Project do
   context "The Project class" do
     it 'returns a list of all projects' do
-      Dir.stubs(:[]).returns(["#{Config.root}/projects/opower"])
+      Dir.stubs(:[]).returns(["#{Configuration.root}/projects/opower"])
       Project.all.should == [Project.new(:name => "opower")]
-      Dir.should have_received(:[]).with("#{Config.root}/projects/*")
+      Dir.should have_received(:[]).with("#{Configuration.root}/projects/*")
     end
   end
 
@@ -38,7 +38,7 @@ describe Project do
       @project.stubs(:stages).returns(["staging"])
       @project.stubs(:system).returns("a log of data")
       @project.deploy_to("staging")
-      @project.should have_received(:system).with("cap deploy -f /projects/opower/deploy.rb -f /projects/opower/deploy/staging.rb")
+      @project.should have_received(:system).with("cap -S stage=staging -f Capfile -f /projects/opower/deploy.rb -f /projects/opower/deploy/staging.rb -n deploy")
     end
 
     it "doesn't deploy to an unknown stage" do

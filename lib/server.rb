@@ -31,7 +31,6 @@ EM.run do
 
       deploy_complete = lambda { |*args|
         puts "Deploy Complete!"
-        p args
         websocket.send({'status' => 'complete', 'log' => args.first}.to_json)
       }
 

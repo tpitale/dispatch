@@ -36,23 +36,23 @@ describe Project do
     it "deploys to a given stage" do
       File.stubs(:open).yields(stub(:write))
       @project.stubs(:stages).returns(["staging"])
-      @project.stubs(:system).returns("a log of data")
+      @project.stubs(:`).returns("a log of data")
       @project.deploy_to("staging")
-      @project.should have_received(:system).with("cap -S stage=staging -f Capfile -f /projects/opower/deploy.rb -f /projects/opower/deploy/staging.rb -n deploy")
+      @project.should have_received(:`).with("cap -S stage=staging -f Capfile -f /projects/opower/deploy.rb -f /projects/opower/deploy/staging.rb -n deploy 2>&1")
     end
 
     it "doesn't deploy to an unknown stage" do
       @project.stubs(:stages).returns(["staging"])
-      @project.stubs(:system)
+      @project.stubs(:`)
       @project.deploy_to("production")
-      @project.should have_received(:system).never
+      @project.should have_received(:`).never
     end
 
     it "writes the deploy log returned to a logfile" do
       file = stub(:write)
       File.stubs(:open).yields(file)
       @project.stubs(:stages).returns(["staging"])
-      @project.stubs(:system).returns("log log log")
+      @project.stubs(:`).returns("log log log")
       @project.deploy_to("staging")
       file.should have_received(:write).with("log log log")
     end

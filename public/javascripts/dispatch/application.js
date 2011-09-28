@@ -25,6 +25,7 @@ DIS.handle_socket_event = function(evt) {
 		DIS.deploying = false;
 		$('a[data-project-name="'+ data['name'] + '"][data-stage="' + data['stage'] + '"]').removeClass('deploying');
 
+		DIS.log(data['log']);
 		// $('#log').html(data['log'].replace(/\\n/gi, '<br />'));
 	}
 }

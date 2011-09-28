@@ -119,3 +119,14 @@ ul.primary-list li.row:last-child {
 ul.primary-list li.row div.stages {
   float: right;
 }
+
+a.deploying {color: #999;}
+
+/* Log
+=============================================================================*/
+
+p#log {
+  width: 320px;
+  margin: 0 auto;
+  font-size: 10px;
+}

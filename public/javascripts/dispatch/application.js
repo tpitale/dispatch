@@ -7,6 +7,7 @@ DIS.log = function(msg) {
 
 DIS.socket = undefined;
 DIS.socket_open = false;
+DIS.deploying = false;
 
 // add class to row to indicate we started deploying, given message
 // add class to row to indicate we completed deploying, given message
@@ -15,18 +16,24 @@ DIS.handle_socket_event = function(evt) {
 
 	// if(!data) {return}
 
-	if(data['status'] == 'complete') {
-		DIS.log(data['log']);
+	if(data['status'] == 'started') {
+		DIS.deploying = true;
+		$('a[data-project-name="'+ data['name'] + '"][data-stage="' + data['stage'] + '"]').addClass('deploying');
 	}
 
-	if(data['status'] == 'started') {
-		
+	if(data['status'] == 'complete') {
+		DIS.deploying = false;
+		$('a[data-project-name="'+ data['name'] + '"][data-stage="' + data['stage'] + '"]').removeClass('deploying');
+
+		// $('#log').html(data['log'].replace(/\\n/gi, '<br />'));
 	}
 }
 
 DIS.handle_socket_open = function() {
 	$('a[data-project-name]').bind('click', function(e) {
 		e.preventDefault();
+
+		if(DIS.deploying) {return}
 
 		var $this = $(this),
 				project_name = $this.data('project-name'),

@@ -10,6 +10,20 @@ autoload :Project, Configuration.root+'/models/project'
 require 'json' # yajl
 require 'pp'
 
+JS_ESCAPE_MAP = {
+  '\\'    => '\\\\',
+  '</'    => '<\/',
+  "\r\n"  => '\n',
+  "\n"    => '\n',
+  "\r"    => '\n',
+  '"'     => '\\"',
+  "'"     => "\\'" }
+
+def escape_for_ws(str)
+  str.gsub(/(\\|<\/|\r\n|[\n\r"'])/) {|match| JS_ESCAPE_MAP[match] }
+end
+
+
 EM.run do
   puts "Server started on 0.0.0.0:8080"
 
@@ -21,7 +35,7 @@ EM.run do
       puts "Received message: #{msg}"
       hash = JSON.parse(msg)
 
-      websocket.send({'status' => 'started'}.to_json)
+      websocket.send(hash.merge({'status' => 'started'}).to_json)
 
       deploy = lambda do
         if project = Project.find(hash['name'])
@@ -31,7 +45,9 @@ EM.run do
 
       deploy_complete = lambda { |*args|
         puts "Deploy Complete!"
-        websocket.send({'status' => 'complete', 'log' => args.first}.to_json)
+        log = escape_for_ws(args.first)
+
+        websocket.send(hash.merge({'status' => 'complete', 'log' => log}).to_json)
       }
 
       EM.defer(deploy, deploy_complete)

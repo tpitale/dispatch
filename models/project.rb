@@ -39,6 +39,7 @@ class Project
     if stages.include?(stage)
       deploy_logs = `cap -S stage=#{stage} -f Capfile -f #{deploy_path} -f #{deploy_path(stage)} -n deploy 2>&1`
       File.open(log_filename(stage), 'w') {|f| f.write(deploy_logs)}
+      deploy_logs
     end
   end
 

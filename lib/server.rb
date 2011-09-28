@@ -1,4 +1,4 @@
-require File.expand_path('../config', File.dirname(__FILE__))
+require './config'
 require 'rubygems'
 require 'bundler'
 

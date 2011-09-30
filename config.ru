@@ -1,4 +1,3 @@
-$: << '.' unless $:.include?('.')
-require 'dispatch'
+require './dispatch'
 
 run Sinatra::Application

@@ -1,6 +1,4 @@
-$: << '.' unless $:.include?('.')
-
-require 'boot'
+require_relative 'boot'
 
 get '/' do
   @projects = Project.all

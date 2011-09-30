@@ -7,6 +7,7 @@ DIS.log = function(msg) {
 
 DIS.socket = undefined;
 DIS.socket_open = false;
+DIS.deploying = false;
 
 // add class to row to indicate we started deploying, given message
 // add class to row to indicate we completed deploying, given message
@@ -15,18 +16,25 @@ DIS.handle_socket_event = function(evt) {
 
 	// if(!data) {return}
 
-	DIS.log(data);
-
-	if(data['status'] == 'complete') {
-		// DIS.log(data['log']);
+	if(data['status'] == 'started') {
+		DIS.deploying = true;
+		$('a[data-project-name="'+ data['name'] + '"][data-stage="' + data['stage'] + '"]').addClass('deploying');
 	}
 
-	if(data['status'] == 'started') {}
+	if(data['status'] == 'complete') {
+		DIS.deploying = false;
+		$('a[data-project-name="'+ data['name'] + '"][data-stage="' + data['stage'] + '"]').removeClass('deploying');
+
+		DIS.log(data['log']);
+		// $('#log').html(data['log'].replace(/\\n/gi, '<br />'));
+	}
 }
 
 DIS.handle_socket_open = function() {
 	$('a[data-project-name]').bind('click', function(e) {
 		e.preventDefault();
+
+		if(DIS.deploying) {return}
 
 		var $this = $(this),
 				project_name = $this.data('project-name'),
@@ -41,8 +49,7 @@ DIS.handle_socket_open = function() {
 
 DIS.handle_socket_close = function() {
 	$('h1.logo').removeClass('open').addClass('closed');
-
-	// reconnect?
+	DIS.log(setTimeout(DIS.reconnect, 5000));
 }
 
 DIS.message_socket = function(msg) {
@@ -63,6 +70,22 @@ DIS.create_socket = function(socket_url, m, o, c) {
 		DIS.socket.onclose = function() {DIS.socket_open = false; DIS.log("Socket Closed"); c();}
 }
 
+DIS.connect = function() {
+	DIS.create_socket(
+		$('meta[name="websocket-url"]').attr("content"),
+		DIS.handle_socket_event,
+		DIS.handle_socket_open,
+		DIS.handle_socket_close
+	);
+}
+
+DIS.reconnect = function() {
+	if(!DIS.socket_open) {
+		delete DIS.socket;
+		DIS.connect();
+	}
+}
+
 DIS = $.extend({}, DIS, {
 	common: {
 		init: function() {
@@ -73,35 +96,9 @@ DIS = $.extend({}, DIS, {
 			// set class passed for any row that has passed, which causes the buttons to show
 
 			// establish websocket
-			DIS.create_socket(
-				$('meta[name="websocket-url"]').attr("content"),
-				DIS.handle_socket_event,
-				DIS.handle_socket_open,
-				DIS.handle_socket_close
-			);
+			DIS.connect();
 		}
 	}
 });
 
-UTIL = {
-	exec: function( controller, action ) {
-		var ns = DIS,
-			action = ( action === undefined ) ? "init" : action;
-
-		if ( controller !== "" && ns[controller] && typeof( ns[controller][action] ) == "function" ) {
-			ns[controller][action]();
-		}
-	},
-
-	init: function() {
-		var body = document.body, controller = body.getAttribute( "data-controller" ), action = body.getAttribute( "data-action" );
-
-		UTIL.exec( "common" );
-		// UTIL.exec( controller );
-		// UTIL.exec( controller, action );
-
-		$(document).trigger('finalized');
-	}
-};
-
-$(document).ready( UTIL.init );
+$(document).ready( DIS.common.init );

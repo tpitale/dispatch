@@ -1,4 +1,4 @@
-require File.expand_path('../config', File.dirname(__FILE__))
+require './config'
 require 'rubygems'
 require 'bundler'
 
@@ -10,7 +10,18 @@ autoload :Project, Configuration.root+'/models/project'
 require 'json' # yajl
 require 'pp'
 
-$logger = Logger.new($stdout)
+JS_ESCAPE_MAP = {
+  '\\'    => '\\\\',
+  '</'    => '<\/',
+  "\r\n"  => '\n',
+  "\n"    => '\n',
+  "\r"    => '\n',
+  '"'     => '\\"',
+  "'"     => "\\'" }
+
+def escape_for_ws(str)
+  str.gsub(/(\\|<\/|\r\n|[\n\r"'])/) {|match| JS_ESCAPE_MAP[match] }
+end
 
 t = Thread.new {EM.run {}}
 
@@ -35,8 +46,8 @@ EM::WebSocket.start(:host => '0.0.0.0', :port => 8080) do |websocket|
 
     deploy_complete = lambda { |*args|
       puts "Deploy Complete!"
-      p args
-      websocket.send({'status' => 'complete', 'log' => args.first}.to_json)
+      log = escape_for_ws(args.first)
+      websocket.send(hash.merge({'status' => 'complete', 'log' => log}).to_json)
     }
 
     EM.defer(deploy, deploy_complete)

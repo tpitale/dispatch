@@ -23,38 +23,35 @@ def escape_for_ws(str)
   str.gsub(/(\\|<\/|\r\n|[\n\r"'])/) {|match| JS_ESCAPE_MAP[match] }
 end
 
-t = Thread.new {EM.run {}}
+EM.run do
+  # can this websocket be a class itself?
+  EM::WebSocket.start(:host => '0.0.0.0', :port => 8080) do |websocket|
+    puts "Server started on 0.0.0.0:8080"
+    websocket.onopen { puts "Client Connected" }
 
-puts "Started the EM thread"
+    websocket.onmessage do |msg|
+      puts "Received message: #{msg}"
+      hash = JSON.parse(msg)
 
-# can this websocket be a class itself?
-EM::WebSocket.start(:host => '0.0.0.0', :port => 8080) do |websocket|
-  $logger.warn "Server started on 0.0.0.0:8080"
-  websocket.onopen { puts "Client Connected" }
+      websocket.send({'status' => 'started'}.to_json)
 
-  websocket.onmessage do |msg|
-    puts "Received message: #{msg}"
-    hash = JSON.parse(msg)
-
-    websocket.send({'status' => 'started'}.to_json)
-
-    deploy = lambda do
-      if project = Project.find(hash['name'])
-        return project.deploy_to(hash['stage'])
+      deploy = lambda do
+        if project = Project.find(hash['name'])
+          return project.deploy_to(hash['stage'])
+        end
       end
+
+      deploy_complete = lambda { |*args|
+        puts "Deploy Complete!"
+        log = escape_for_ws(args.first)
+        websocket.send(hash.merge({'status' => 'complete', 'log' => log}).to_json)
+      }
+
+      EM.defer(deploy, deploy_complete)
     end
 
-    deploy_complete = lambda { |*args|
-      puts "Deploy Complete!"
-      log = escape_for_ws(args.first)
-      websocket.send(hash.merge({'status' => 'complete', 'log' => log}).to_json)
-    }
-
-    EM.defer(deploy, deploy_complete)
+    websocket.onclose { puts "Websocket Closed" }
+    websocket.onerror { |e| puts "err #{e.inspect}" }
   end
 
-  websocket.onclose { puts "Websocket Closed" }
-  websocket.onerror { |e| puts "err #{e.inspect}" }
 end
-
-t.join

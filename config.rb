@@ -8,4 +8,5 @@ module Configuration
   def environment
     (ENV["RACK_ENV"] || ENV["APP_ENV"] || 'development').to_sym
   end
+  alias :env :environment
 end

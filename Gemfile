@@ -1,6 +1,7 @@
 source "http://rubygems.org"
 
 gem 'rake', '0.8.7'
+gem 'thin'
 gem 'capistrano'
 gem 'capistrano-ext'
 gem 'railsless-deploy', :require => false
